@@ -38,7 +38,7 @@ export const TOOLS: readonly Tool[] = [
   {
     number: "02",
     slug: "campaign",
-    name: "Campaign Operations Planner",
+    name: "GTM/Campaign Planner",
     shortName: "Campaign Planner",
     shortDesc: "Turn messy campaign context into an executable launch plan",
     longDesc:
