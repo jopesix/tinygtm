@@ -150,7 +150,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     planAi = PlanAiSchema.parse(aiJson);
   } catch (err) {
-    captureError(err, { where: "campaign.plan.schema", model });
+    captureError(err, {
+      where: "campaign.plan.schema",
+      model,
+      ai_output: JSON.stringify(aiJson).slice(0, 1500),
+    });
     return NextResponse.json(
       {
         error: "ai_invalid_output",

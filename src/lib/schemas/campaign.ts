@@ -64,6 +64,7 @@ export const Channel = z.enum([
   "sales_outbound",
   "in_app",
   "events",
+  "other",
 ]);
 
 export const LaunchComplexity = z.enum(["low", "medium", "high"]);
@@ -87,11 +88,16 @@ export const Category = z.enum([
   "support_enablement",
   "launch_day",
   "post_launch",
+  "other",
 ]);
 
-// Normalize common AI variations (hyphens, spaces, casing) before enum validation.
-// Otherwise "must-have" or "Pre-launch" or "Should Have" silently fail validation
-// even though they're semantically right.
+// Two layers of forgiveness for AI outputs:
+// 1. Normalize string variations (hyphens, spaces, casing) before enum check.
+//    "must-have" → "must_have", "Pre-launch" → "pre_launch", etc.
+// 2. If the normalized value still isn't in the enum, fall back to a sensible
+//    default. Unknown campaign types / business types / channels become "other";
+//    unknown team/motion/phase/priority/severity get a reasonable middle option.
+//    This means a slightly-off AI response never blocks the whole classification.
 function normalizeEnumString(v: unknown): unknown {
   if (typeof v !== "string") return v;
   return v
@@ -101,15 +107,56 @@ function normalizeEnumString(v: unknown): unknown {
     .replace(/^_+|_+$/g, "");
 }
 
-const NormalizedLaunchPhase = z.preprocess(normalizeEnumString, LaunchPhase);
-const NormalizedPriority = z.preprocess(normalizeEnumString, Priority);
-const NormalizedComplexity = z.preprocess(normalizeEnumString, LaunchComplexity);
-const NormalizedCampaignType = z.preprocess(normalizeEnumString, CampaignType);
-const NormalizedBusinessType = z.preprocess(normalizeEnumString, BusinessType);
-const NormalizedTeamStructure = z.preprocess(normalizeEnumString, TeamStructure);
-const NormalizedGtmMotion = z.preprocess(normalizeEnumString, GtmMotion);
-const NormalizedChannel = z.preprocess(normalizeEnumString, Channel);
-const NormalizedCategory = z.preprocess(normalizeEnumString, Category);
+// Inlined per-enum so TypeScript keeps the literal type info through preprocess.
+// A generic helper collapsed everything to `string`.
+
+function withFallback(options: readonly string[], fallback: string) {
+  return (v: unknown): string => {
+    const n = normalizeEnumString(v);
+    return typeof n === "string" && options.includes(n) ? n : fallback;
+  };
+}
+
+const NormalizedLaunchPhase = z.preprocess(
+  withFallback(LaunchPhase.options, "pre_launch"),
+  LaunchPhase,
+);
+const NormalizedPriority = z.preprocess(
+  withFallback(Priority.options, "should_have"),
+  Priority,
+);
+const NormalizedComplexity = z.preprocess(
+  withFallback(LaunchComplexity.options, "medium"),
+  LaunchComplexity,
+);
+const NormalizedSeverity = z.preprocess(
+  withFallback(Severity.options, "medium"),
+  Severity,
+);
+const NormalizedCampaignType = z.preprocess(
+  withFallback(CampaignType.options, "other"),
+  CampaignType,
+);
+const NormalizedBusinessType = z.preprocess(
+  withFallback(BusinessType.options, "other"),
+  BusinessType,
+);
+const NormalizedTeamStructure = z.preprocess(
+  withFallback(TeamStructure.options, "in_house_team"),
+  TeamStructure,
+);
+const NormalizedGtmMotion = z.preprocess(
+  withFallback(GtmMotion.options, "hybrid"),
+  GtmMotion,
+);
+const NormalizedChannel = z.preprocess(
+  withFallback(Channel.options, "other"),
+  Channel,
+);
+const NormalizedCategory = z.preprocess(
+  withFallback(Category.options, "strategy"),
+  Category,
+);
 
 // ---------- Display labels (server + client) ----------
 
@@ -205,12 +252,15 @@ export const ClassifyRequestSchema = z.object({
 export type ClassifyRequest = z.infer<typeof ClassifyRequestSchema>;
 
 export const ClassificationSchema = z.object({
-  campaign_name: z.string().min(2).max(160),
+  // campaign_name is the only field with no semantic fallback — the AI must
+  // produce *some* string. Range is generous so the AI has room.
+  campaign_name: z.string().trim().min(1).max(240).default("Untitled campaign"),
   campaign_type: NormalizedCampaignType,
   business_type: NormalizedBusinessType,
   team_structure: NormalizedTeamStructure,
   gtm_motion: NormalizedGtmMotion,
-  channels: z.array(NormalizedChannel).min(1).max(8),
+  // Accept 0–12 channels. Empty is fine — user can pick during confirmation.
+  channels: z.array(NormalizedChannel).max(12).default([]),
   launch_complexity: NormalizedComplexity,
 });
 
@@ -239,10 +289,7 @@ export const TaskSchema = z.object({
 export const GapSchema = z.object({
   description: z.string().min(3).max(500),
   area: z.string().max(80).optional().default(""),
-  severity: z.preprocess(
-    (v) => (v == null || v === "" ? "medium" : normalizeEnumString(v)),
-    Severity,
-  ).default("medium"),
+  severity: NormalizedSeverity.default("medium"),
 });
 
 export const PlanAiSchema = z.object({

@@ -147,7 +147,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     classification = ClassificationSchema.parse(aiJson);
   } catch (err) {
-    captureError(err, { where: "campaign.classify.schema", model });
+    // Log the actual AI output so we can tune the schema if a real shape is
+    // tripping validation. Truncate to keep logs manageable.
+    captureError(err, {
+      where: "campaign.classify.schema",
+      model,
+      ai_output: JSON.stringify(aiJson).slice(0, 1500),
+    });
     return NextResponse.json(
       {
         error: "ai_invalid_output",
