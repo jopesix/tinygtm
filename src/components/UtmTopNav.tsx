@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Link2, LayoutDashboard, Settings, LogOut } from "lucide-react";
 import { SignInLink } from "@/components/SignInLink";
+import { ToolSwitcher } from "@/components/ToolSwitcher";
 
 export async function UtmTopNav() {
   const supabase = await createClient();
@@ -23,6 +24,7 @@ export async function UtmTopNav() {
         </Link>
 
         <nav className="flex items-center gap-1">
+          <ToolSwitcher />
           <Link
             href="/utm"
             className="inline-flex items-center gap-1.5 text-sm text-zinc-700 hover:bg-zinc-100 px-3 py-1.5 rounded-md"
