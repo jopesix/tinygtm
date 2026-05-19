@@ -1,17 +1,9 @@
-import { redirect } from "next/navigation";
 import { CampaignTopNav } from "@/components/CampaignTopNav";
 import { CampaignWizard } from "./CampaignWizard";
-import { createClient } from "@/lib/supabase/server";
 
-export default async function NewCampaignPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    redirect("/login?next=/campaign/new");
-  }
-
+// Open to anonymous — anyone can generate a plan. Sign-in is only required for
+// saving/editing/sharing (handled inside the wizard + plan view).
+export default function NewCampaignPage() {
   return (
     <>
       <CampaignTopNav />

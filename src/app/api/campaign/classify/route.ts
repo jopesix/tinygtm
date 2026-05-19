@@ -17,6 +17,7 @@ import {
 } from "@/lib/prompts/campaign";
 import {
   addMonthlyCostCents,
+  anonPerDay,
   checkAndIncrementDailyLimit,
   checkMonthlyCostCap,
   refundDailyLimit,
@@ -27,6 +28,14 @@ import { createClient } from "@/lib/supabase/server";
 
 export const maxDuration = 30;
 export const dynamic = "force-dynamic";
+
+function getClientIp(req: NextRequest): string {
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0]!.trim();
+  const real = req.headers.get("x-real-ip");
+  if (real) return real.trim();
+  return "unknown";
+}
 
 function extractJson(text: string): string {
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
@@ -53,15 +62,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json(
-      { error: "unauthorized", message: "Sign in to use the Campaign Planner." },
-      { status: 401 },
-    );
-  }
-
-  const subject = `user:${user.id}`;
-  const limit = userPerDay();
+  const subject = user ? `user:${user.id}` : `ip:${getClientIp(req)}`;
+  const limit = user ? userPerDay() : anonPerDay();
   const rl = await checkAndIncrementDailyLimit(subject, limit);
   if (!rl.ok) {
     return NextResponse.json(

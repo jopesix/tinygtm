@@ -23,6 +23,7 @@ import {
 } from "@/lib/schemas/campaign";
 
 const MAX_SOURCE = 50_000;
+const RESULT_STORAGE_KEY = "tinygtm-campaign:last-result";
 
 const STEPS = [
   { key: "input", label: "Add context" },
@@ -118,13 +119,26 @@ export function CampaignWizard() {
         setGenerating(false);
         return;
       }
-      const planId = (data as { plan_id: string | null }).plan_id;
-      if (planId) {
-        router.push(`/campaign/${planId}`);
+      const payload = data as { plan_id: string | null };
+      if (payload.plan_id) {
+        // Signed-in: redirect to the persistent plan page.
+        router.push(`/campaign/${payload.plan_id}`);
       } else {
-        toast.error("Plan generated but couldn't be saved. Make sure campaign.sql is applied.");
-        setStep("classify");
-        setGenerating(false);
+        // Anonymous: stash the full plan + classification + source in
+        // sessionStorage and route to the no-id view.
+        try {
+          sessionStorage.setItem(
+            RESULT_STORAGE_KEY,
+            JSON.stringify({
+              ...(data as Record<string, unknown>),
+              source_text: sourceText,
+              source_url: sourceUrl,
+            }),
+          );
+        } catch {
+          // ignore — /campaign/result will show "no plan" empty state
+        }
+        router.push("/campaign/result");
       }
     } catch {
       toast.error("Network error generating plan. Try again.");

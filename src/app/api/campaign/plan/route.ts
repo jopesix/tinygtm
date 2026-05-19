@@ -19,6 +19,7 @@ import {
 } from "@/lib/prompts/campaign";
 import {
   addMonthlyCostCents,
+  anonPerDay,
   checkAndIncrementDailyLimit,
   checkMonthlyCostCap,
   refundDailyLimit,
@@ -29,6 +30,14 @@ import { createClient } from "@/lib/supabase/server";
 
 export const maxDuration = 30;
 export const dynamic = "force-dynamic";
+
+function getClientIp(req: NextRequest): string {
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0]!.trim();
+  const real = req.headers.get("x-real-ip");
+  if (real) return real.trim();
+  return "unknown";
+}
 
 function extractJson(text: string): string {
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
@@ -55,15 +64,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json(
-      { error: "unauthorized", message: "Sign in to use the Campaign Planner." },
-      { status: 401 },
-    );
-  }
-
-  const subject = `user:${user.id}`;
-  const limit = userPerDay();
+  const subject = user ? `user:${user.id}` : `ip:${getClientIp(req)}`;
+  const limit = user ? userPerDay() : anonPerDay();
   const rl = await checkAndIncrementDailyLimit(subject, limit);
   if (!rl.ok) {
     return NextResponse.json(
@@ -158,72 +160,70 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     );
   }
 
-  // Persist
+  // Persist (signed-in only). Anonymous users get the plan in the response and
+  // can view it via /campaign/result (sessionStorage-backed).
   let planId: string | null = null;
-  try {
-    const { data: plan, error: planErr } = await supabase
-      .from("campaign_plan")
-      .insert({
-        user_id: user.id,
-        source_text: parsed.source_text,
-        source_url: parsed.source_url || null,
-        campaign_name: parsed.classification.campaign_name,
-        campaign_type: parsed.classification.campaign_type,
-        business_type: parsed.classification.business_type,
-        team_structure: parsed.classification.team_structure,
-        gtm_motion: parsed.classification.gtm_motion,
-        channels: parsed.classification.channels,
-        launch_complexity: parsed.classification.launch_complexity,
-        ai_model: model,
-        ai_input_tokens: usageInput,
-        ai_output_tokens: usageOutput,
-        ai_cost_cents: costCents,
-      })
-      .select("id")
-      .single();
+  if (user) {
+    try {
+      const { data: plan, error: planErr } = await supabase
+        .from("campaign_plan")
+        .insert({
+          user_id: user.id,
+          source_text: parsed.source_text,
+          source_url: parsed.source_url || null,
+          campaign_name: parsed.classification.campaign_name,
+          campaign_type: parsed.classification.campaign_type,
+          business_type: parsed.classification.business_type,
+          team_structure: parsed.classification.team_structure,
+          gtm_motion: parsed.classification.gtm_motion,
+          channels: parsed.classification.channels,
+          launch_complexity: parsed.classification.launch_complexity,
+          ai_model: model,
+          ai_input_tokens: usageInput,
+          ai_output_tokens: usageOutput,
+          ai_cost_cents: costCents,
+        })
+        .select("id")
+        .single();
 
-    if (planErr) {
-      captureError(planErr, { where: "supabase.campaign_plan.insert" });
-      return NextResponse.json(
-        {
-          error: "save_failed",
-          message:
-            "Generated the plan but couldn't save it. Make sure campaign.sql has been applied.",
-        },
-        { status: 500 },
-      );
-    }
-    planId = plan.id as string;
+      if (planErr) {
+        // Generation already succeeded; surface the plan inline so the user
+        // can still see / copy it even though saving failed.
+        captureError(planErr, { where: "supabase.campaign_plan.insert" });
+      } else if (plan) {
+        planId = plan.id as string;
 
-    const phaseOrder = ["pre_launch", "launch_day", "post_launch"] as const;
-    const taskRows = planAi.tasks.map((t, idx) => ({
-      plan_id: planId,
-      task: t.task,
-      category: t.category,
-      suggested_owner: t.suggested_owner || null,
-      launch_phase: t.launch_phase,
-      priority: t.priority,
-      dependency: t.dependency || null,
-      notes: t.notes || null,
-      sort_order: phaseOrder.indexOf(t.launch_phase) * 1000 + idx,
-    }));
-    if (taskRows.length) {
-      const { error: tErr } = await supabase.from("plan_task").insert(taskRows);
-      if (tErr) captureError(tErr, { where: "supabase.plan_task.insert" });
-    }
+        const phaseOrder = ["pre_launch", "launch_day", "post_launch"] as const;
+        const taskRows = planAi.tasks.map((t, idx) => ({
+          plan_id: planId,
+          task: t.task,
+          category: t.category,
+          suggested_owner: t.suggested_owner || null,
+          launch_phase: t.launch_phase,
+          priority: t.priority,
+          dependency: t.dependency || null,
+          notes: t.notes || null,
+          sort_order: phaseOrder.indexOf(t.launch_phase) * 1000 + idx,
+        }));
+        if (taskRows.length) {
+          const { error: tErr } = await supabase.from("plan_task").insert(taskRows);
+          if (tErr) captureError(tErr, { where: "supabase.plan_task.insert" });
+        }
 
-    const gapRows = planAi.gaps.map((g) => ({
-      plan_id: planId,
-      description: g.description,
-      area: g.area || null,
-      severity: g.severity,
-    }));
-    if (gapRows.length) {
-      const { error: gErr } = await supabase.from("plan_gap").insert(gapRows);
-      if (gErr) captureError(gErr, { where: "supabase.plan_gap.insert" });
+        const gapRows = planAi.gaps.map((g) => ({
+          plan_id: planId,
+          description: g.description,
+          area: g.area || null,
+          severity: g.severity,
+        }));
+        if (gapRows.length) {
+          const { error: gErr } = await supabase.from("plan_gap").insert(gapRows);
+          if (gErr) captureError(gErr, { where: "supabase.plan_gap.insert" });
+        }
+      }
+    } catch (err) {
+      captureError(err, { where: "campaign.persist" });
     }
-  } catch (err) {
-    captureError(err, { where: "campaign.persist" });
   }
 
   track("campaign_plan_generated", {
@@ -237,6 +237,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   return NextResponse.json({
     plan_id: planId,
+    is_anonymous: !user,
+    classification: parsed.classification,
     tasks: planAi.tasks,
     gaps: planAi.gaps,
     usage: { input_tokens: usageInput, output_tokens: usageOutput, cost_cents: costCents, model },

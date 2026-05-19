@@ -32,6 +32,7 @@ import {
   downloadPdf,
   type ExportFaq,
 } from "@/lib/export-faqs";
+import { ShareButton } from "@/components/ShareButton";
 import {
   DndContext,
   KeyboardSensor,
@@ -523,6 +524,7 @@ function Loaded({ seed }: { seed: InitialSessionData }) {
             <Button variant="secondary" onClick={copyAllMarkdown}>
               <Copy className="w-4 h-4" /> Copy all
             </Button>
+            {seed.session_id && <ShareButton href={`/faq/share/${seed.session_id}`} />}
             <DownloadMenu faqs={faqs} />
           </div>
         </header>
@@ -531,7 +533,7 @@ function Loaded({ seed }: { seed: InitialSessionData }) {
           <Card>
             <CardBody className="flex items-center justify-between gap-3">
               <p className="text-sm text-zinc-700">
-                You&apos;re viewing this as a guest. Sign in to edit, save, reorder, or generate more.
+                You&apos;re viewing this as a guest. Sign in to save, edit, or reorder.
               </p>
               <Link href={`/login?next=${encodeURIComponent("/faq/new")}`}>
                 <Button size="sm">Sign in</Button>
@@ -556,49 +558,47 @@ function Loaded({ seed }: { seed: InitialSessionData }) {
           />
         ))}
 
-        {isPersisted && (
-          <Card>
-            <CardBody className="space-y-3">
-              <div>
-                <h3 className="text-sm font-medium text-ink">Generate more FAQs</h3>
-                <p className="text-xs text-zinc-500 mt-0.5">
-                  Adds new FAQs without replacing the ones above. Use the Missing Context panel on
-                  the right to give Claude answers it needs.
-                </p>
-              </div>
-              <Textarea
-                value={extraContext}
-                onChange={(e) => setExtraContext(e.target.value)}
-                placeholder="Optional: free-form context (e.g. 'also add an FAQ about refunds')."
-                rows={3}
-                className="text-sm"
-              />
-              <div className="flex items-center gap-2">
-                <Button
-                  onClick={() => handleGenerateMore({ extra: extraContext.trim() || undefined })}
-                  disabled={generatingMore}
-                >
-                  {generatingMore ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" /> Generating…
-                    </>
-                  ) : (
-                    <>
-                      <Plus className="w-4 h-4" /> Generate 6 more
-                    </>
-                  )}
-                </Button>
-              </div>
-            </CardBody>
-          </Card>
-        )}
+        <Card>
+          <CardBody className="space-y-3">
+            <div>
+              <h3 className="text-sm font-medium text-ink">Generate more FAQs</h3>
+              <p className="text-xs text-zinc-500 mt-0.5">
+                Adds new FAQs without replacing the ones above. Use the Missing Context panel on
+                the right to give Claude answers it needs.
+              </p>
+            </div>
+            <Textarea
+              value={extraContext}
+              onChange={(e) => setExtraContext(e.target.value)}
+              placeholder="Optional: free-form context (e.g. 'also add an FAQ about refunds')."
+              rows={3}
+              className="text-sm"
+            />
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={() => handleGenerateMore({ extra: extraContext.trim() || undefined })}
+                disabled={generatingMore}
+              >
+                {generatingMore ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" /> Generating…
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-4 h-4" /> Generate 6 more
+                  </>
+                )}
+              </Button>
+            </div>
+          </CardBody>
+        </Card>
       </section>
 
       {/* Side panel — Missing Context */}
       <aside className="space-y-3 lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
         <div>
           <h2 className="text-sm font-medium text-ink">Missing context ({gaps.length})</h2>
-          {isPersisted && gaps.length > 0 && (
+          {gaps.length > 0 && (
             <p className="text-xs text-zinc-500 mt-1">
               These are questions Claude needs answered to write better FAQs. Pick the ones you can
               answer.
@@ -629,29 +629,25 @@ function Loaded({ seed }: { seed: InitialSessionData }) {
             <button
               key={key}
               type="button"
-              onClick={isPersisted ? toggle : undefined}
-              disabled={!isPersisted}
+              onClick={toggle}
               className={
-                "block w-full text-left rounded-2xl bg-white border shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-colors px-4 py-3 " +
+                "block w-full text-left rounded-2xl bg-white border shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-colors px-4 py-3 cursor-pointer " +
                 (selected
                   ? "border-brand ring-2 ring-brand/30"
-                  : "border-zinc-200 hover:border-zinc-300") +
-                (isPersisted ? " cursor-pointer" : " cursor-default")
+                  : "border-zinc-200 hover:border-zinc-300")
               }
             >
               <div className="flex items-start gap-3">
-                {isPersisted && (
-                  <span
-                    className={
-                      "mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded border " +
-                      (selected
-                        ? "bg-brand border-brand text-white"
-                        : "bg-white border-zinc-300 text-transparent")
-                    }
-                  >
-                    <Check className="w-3 h-3" />
-                  </span>
-                )}
+                <span
+                  className={
+                    "mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded border " +
+                    (selected
+                      ? "bg-brand border-brand text-white"
+                      : "bg-white border-zinc-300 text-transparent")
+                  }
+                >
+                  <Check className="w-3 h-3" />
+                </span>
                 <div className="flex-1 space-y-1.5">
                   <div className="flex items-center justify-between gap-2">
                     <div className="text-xs uppercase tracking-wide text-zinc-500">
@@ -668,7 +664,7 @@ function Loaded({ seed }: { seed: InitialSessionData }) {
             </button>
           );
         })}
-        {isPersisted && gaps.length > 0 && (
+        {gaps.length > 0 && (
           <div className="pt-1">
             <Button
               onClick={() => setModalOpen(true)}
@@ -1026,14 +1022,9 @@ function SortableFaqCard({
 
           <div className="flex items-center gap-1 pt-1">
             {!editing && (
-              <Button size="sm" variant="ghost" onClick={onCopy} title="Copy this FAQ">
-                <Copy className="w-3.5 h-3.5" />
-              </Button>
-            )}
-            {canEdit && !editing && (
               <>
-                <Button size="sm" variant="ghost" onClick={startEdit} title="Edit">
-                  <Pencil className="w-3.5 h-3.5" />
+                <Button size="sm" variant="ghost" onClick={onCopy} title="Copy this FAQ">
+                  <Copy className="w-3.5 h-3.5" />
                 </Button>
                 <Button
                   size="sm"
@@ -1048,6 +1039,11 @@ function SortableFaqCard({
                     <RefreshCw className="w-3.5 h-3.5" />
                   )}
                 </Button>
+                {canEdit && (
+                  <Button size="sm" variant="ghost" onClick={startEdit} title="Edit">
+                    <Pencil className="w-3.5 h-3.5" />
+                  </Button>
+                )}
                 <Button size="sm" variant="ghost" onClick={onDelete} title="Delete">
                   <Trash2 className="w-3.5 h-3.5" />
                 </Button>

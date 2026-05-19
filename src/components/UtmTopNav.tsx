@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { Link2, LayoutDashboard, Settings, LogOut, LogIn } from "lucide-react";
+import { Link2, LayoutDashboard, Settings, LogOut } from "lucide-react";
+import { SignInLink } from "@/components/SignInLink";
 
 export async function UtmTopNav() {
   const supabase = await createClient();
@@ -58,15 +59,7 @@ export async function UtmTopNav() {
             </>
           )}
 
-          {!user && (
-            <Link
-              href="/login"
-              className="inline-flex items-center gap-1.5 text-sm font-medium bg-brand text-white hover:bg-brand-hover px-3 py-1.5 rounded-md"
-            >
-              <LogIn className="w-4 h-4" />
-              Sign in
-            </Link>
-          )}
+          {!user && <SignInLink />}
         </nav>
       </div>
     </header>

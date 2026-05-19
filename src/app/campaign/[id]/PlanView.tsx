@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { Check, Copy, Trash2 } from "lucide-react";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { ShareButton } from "@/components/ShareButton";
 import {
   CAMPAIGN_TYPE_LABELS,
   CATEGORY_LABELS,
@@ -23,7 +24,7 @@ import {
 import { toggleTask, deletePlan } from "./actions";
 
 type SeedTask = {
-  id: string;
+  id: string | null; // null for anonymous (no DB row)
   task: string;
   category: string;
   suggested_owner: string | null;
@@ -36,14 +37,14 @@ type SeedTask = {
 };
 
 type SeedGap = {
-  id: string;
+  id: string | null;
   description: string;
   area: string | null;
   severity: "low" | "medium" | "high";
 };
 
 export type PlanSeed = {
-  id: string;
+  id: string | null; // null for anonymous flow (no persisted plan)
   classification: {
     campaign_name: string;
     campaign_type: string;
@@ -87,21 +88,26 @@ const PHASE_ORDER: SeedTask["launch_phase"][] = ["pre_launch", "launch_day", "po
 export function PlanView({ seed }: { seed: PlanSeed }) {
   const [tasks, setTasks] = useState<SeedTask[]>(seed.tasks);
   const [, startTransition] = useTransition();
+  const isPersisted = Boolean(seed.id);
 
-  function flipTask(taskId: string) {
-    const target = tasks.find((t) => t.id === taskId);
+  function flipTask(rowKey: string) {
+    const target = tasks.find((t) => (t.id ?? `idx-${tasks.indexOf(t)}`) === rowKey);
     if (!target) return;
     const nextStatus = target.status === "done" ? "pending" : "done";
     setTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, status: nextStatus } : t)),
+      prev.map((t) =>
+        (t.id ?? `idx-${prev.indexOf(t)}`) === rowKey ? { ...t, status: nextStatus } : t,
+      ),
     );
+    // Only persist if the row has a real DB id (signed-in flow).
+    if (!target.id) return;
+    const dbId = target.id;
     startTransition(async () => {
-      const res = await toggleTask(taskId, nextStatus);
+      const res = await toggleTask(dbId, nextStatus);
       if (!res.ok) {
         toast.error(res.error ?? "Couldn't save.");
-        // Revert
         setTasks((prev) =>
-          prev.map((t) => (t.id === taskId ? { ...t, status: target.status } : t)),
+          prev.map((t) => (t.id === dbId ? { ...t, status: target.status } : t)),
         );
       }
     });
@@ -159,6 +165,7 @@ export function PlanView({ seed }: { seed: PlanSeed }) {
   }
 
   async function handleDelete() {
+    if (!seed.id) return;
     if (!confirm("Delete this plan? Tasks and gaps go with it.")) return;
     const res = await deletePlan(seed.id);
     if (!res.ok) {
@@ -201,11 +208,31 @@ export function PlanView({ seed }: { seed: PlanSeed }) {
             <Button variant="secondary" onClick={copyAllMarkdown}>
               <Copy className="w-4 h-4" /> Copy as Markdown
             </Button>
-            <Button variant="ghost" onClick={handleDelete} title="Delete this plan">
-              <Trash2 className="w-4 h-4" />
-            </Button>
+            {isPersisted && seed.id && <ShareButton href={`/campaign/share/${seed.id}`} />}
+            {isPersisted && (
+              <Button variant="ghost" onClick={handleDelete} title="Delete this plan">
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            )}
           </div>
         </header>
+
+        {!isPersisted && (
+          <Card>
+            <CardBody className="flex items-center justify-between gap-3">
+              <p className="text-sm text-zinc-700">
+                You&apos;re viewing this as a guest. Sign in to save this plan, check tasks off,
+                or share a view-only link.
+              </p>
+              <a
+                href={`/login?next=${encodeURIComponent("/campaign/new")}`}
+                className="inline-flex items-center gap-1.5 text-sm font-medium bg-brand text-white hover:bg-brand-hover px-3 py-1.5 rounded-md whitespace-nowrap"
+              >
+                Sign in
+              </a>
+            </CardBody>
+          </Card>
+        )}
 
         <Card>
           <CardBody className="flex flex-wrap gap-1.5">
@@ -226,12 +253,14 @@ export function PlanView({ seed }: { seed: PlanSeed }) {
               {PHASE_LABELS[g.phase]}
             </h2>
             <div className="space-y-2">
-              {g.rows.map((t) => (
-                <Card key={t.id}>
+              {g.rows.map((t, idx) => {
+                const rowKey = t.id ?? `idx-${tasks.indexOf(t)}-${g.phase}-${idx}`;
+                return (
+                <Card key={rowKey}>
                   <CardBody className="py-3 flex items-start gap-3">
                     <button
                       type="button"
-                      onClick={() => flipTask(t.id)}
+                      onClick={() => flipTask(rowKey)}
                       className={
                         "mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-colors " +
                         (t.status === "done"
@@ -282,7 +311,8 @@ export function PlanView({ seed }: { seed: PlanSeed }) {
                     </div>
                   </CardBody>
                 </Card>
-              ))}
+                );
+              })}
             </div>
           </section>
         ))}
@@ -312,8 +342,8 @@ export function PlanView({ seed }: { seed: PlanSeed }) {
             </CardBody>
           </Card>
         )}
-        {seed.gaps.map((g) => (
-          <Card key={g.id}>
+        {seed.gaps.map((g, idx) => (
+          <Card key={g.id ?? `gap-${idx}`}>
             <CardBody className="space-y-1.5">
               <div className="flex items-center justify-between gap-2">
                 {g.area && (
