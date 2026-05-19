@@ -1,26 +1,14 @@
 import type { NextConfig } from "next";
 
-// TinyGTM treats /faq and /utm as canonical tool URLs. Today they 308 to the
-// external Vercel apps that host each tool. When we consolidate into a real
-// monorepo, these redirects get replaced by route groups inside this app and
-// the public URLs stay stable.
+// TinyGTM treats /faq and /utm as canonical tool URLs. Both are real route
+// groups inside this app — /faq/* (FAQ Generator) and /utm/* (UTM Builder).
+// The bare paths /faq and /utm redirect to each tool's natural entry point.
 
 const nextConfig: NextConfig = {
   async redirects() {
     return [
-      // /faq is now a real route group inside this app — no redirect.
-      // /faq → /faq/new is a nicer landing than 404 on the bare path.
-      {
-        source: "/faq",
-        destination: "/faq/new",
-        permanent: false,
-      },
-      // /utm still 307s to the external UTM Builder until Phase 3 lands.
-      {
-        source: "/utm",
-        destination: "https://utm-builder-eosin.vercel.app/",
-        permanent: false,
-      },
+      { source: "/faq", destination: "/faq/new", permanent: false },
+      // /utm is its own real page (the link builder) so no redirect.
     ];
   },
 };
