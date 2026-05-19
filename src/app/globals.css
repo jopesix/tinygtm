@@ -1,3 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  /* TinyGTM brand — exposed as Tailwind 4 theme tokens so utility classes
+     like bg-brand, text-ink, hover:bg-brand-hover work across the migrated
+     FAQ Generator components. The CSS variables below in :root carry the
+     same values for the landing's direct-CSS markup. */
+  --color-brand: #f26b3a;
+  --color-brand-hover: #d95a2b;
+  --color-brand-soft: #fde6dc;
+  --color-ink: #1f2d45;
+  --color-paper: #fbfaf8;
+}
+
 /* TinyGTM landing — ported from the design handoff bundle (chat1.md, 2026-05-17).
    Visual language matches the Episode design system: coral primary, off-white
    surfaces, DM Sans / Inter / JetBrains Mono. */
