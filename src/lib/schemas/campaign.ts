@@ -89,6 +89,28 @@ export const Category = z.enum([
   "post_launch",
 ]);
 
+// Normalize common AI variations (hyphens, spaces, casing) before enum validation.
+// Otherwise "must-have" or "Pre-launch" or "Should Have" silently fail validation
+// even though they're semantically right.
+function normalizeEnumString(v: unknown): unknown {
+  if (typeof v !== "string") return v;
+  return v
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
+const NormalizedLaunchPhase = z.preprocess(normalizeEnumString, LaunchPhase);
+const NormalizedPriority = z.preprocess(normalizeEnumString, Priority);
+const NormalizedComplexity = z.preprocess(normalizeEnumString, LaunchComplexity);
+const NormalizedCampaignType = z.preprocess(normalizeEnumString, CampaignType);
+const NormalizedBusinessType = z.preprocess(normalizeEnumString, BusinessType);
+const NormalizedTeamStructure = z.preprocess(normalizeEnumString, TeamStructure);
+const NormalizedGtmMotion = z.preprocess(normalizeEnumString, GtmMotion);
+const NormalizedChannel = z.preprocess(normalizeEnumString, Channel);
+const NormalizedCategory = z.preprocess(normalizeEnumString, Category);
+
 // ---------- Display labels (server + client) ----------
 
 export const CAMPAIGN_TYPE_LABELS: Record<string, string> = {
@@ -184,12 +206,12 @@ export type ClassifyRequest = z.infer<typeof ClassifyRequestSchema>;
 
 export const ClassificationSchema = z.object({
   campaign_name: z.string().min(2).max(160),
-  campaign_type: CampaignType,
-  business_type: BusinessType,
-  team_structure: TeamStructure,
-  gtm_motion: GtmMotion,
-  channels: z.array(Channel).min(1).max(8),
-  launch_complexity: LaunchComplexity,
+  campaign_type: NormalizedCampaignType,
+  business_type: NormalizedBusinessType,
+  team_structure: NormalizedTeamStructure,
+  gtm_motion: NormalizedGtmMotion,
+  channels: z.array(NormalizedChannel).min(1).max(8),
+  launch_complexity: NormalizedComplexity,
 });
 
 export type Classification = z.infer<typeof ClassificationSchema>;
@@ -205,24 +227,27 @@ export type PlanGenerateRequest = z.infer<typeof PlanGenerateRequestSchema>;
 // ---------- AI response shapes ----------
 
 export const TaskSchema = z.object({
-  task: z.string().min(5).max(300),
-  category: Category,
-  suggested_owner: z.string().max(80).default(""),
-  launch_phase: LaunchPhase,
-  priority: Priority,
-  dependency: z.string().max(200).default(""),
-  notes: z.string().max(400).default(""),
+  task: z.string().min(3).max(500),
+  category: NormalizedCategory,
+  suggested_owner: z.string().max(120).optional().default(""),
+  launch_phase: NormalizedLaunchPhase,
+  priority: NormalizedPriority,
+  dependency: z.string().max(300).optional().default(""),
+  notes: z.string().max(600).optional().default(""),
 });
 
 export const GapSchema = z.object({
-  description: z.string().min(5).max(300),
-  area: z.string().max(60).default(""),
-  severity: Severity.default("medium"),
+  description: z.string().min(3).max(500),
+  area: z.string().max(80).optional().default(""),
+  severity: z.preprocess(
+    (v) => (v == null || v === "" ? "medium" : normalizeEnumString(v)),
+    Severity,
+  ).default("medium"),
 });
 
 export const PlanAiSchema = z.object({
-  tasks: z.array(TaskSchema).min(8).max(40),
-  gaps: z.array(GapSchema).max(15).default([]),
+  tasks: z.array(TaskSchema).min(4).max(50),
+  gaps: z.array(GapSchema).max(20).default([]),
 });
 
 export type Task = z.infer<typeof TaskSchema>;

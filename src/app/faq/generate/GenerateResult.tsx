@@ -511,13 +511,8 @@ function Loaded({ seed }: { seed: InitialSessionData }) {
           <div>
             <h1 className="text-2xl font-semibold text-ink tracking-tight">FAQ result</h1>
             <p className="text-sm text-zinc-500 mt-1">
-              {totalCount} FAQ{totalCount === 1 ? "" : "s"} ·{" "}
-              {seed.usage.model || "Claude"} · {(seed.usage.cost_cents / 100).toFixed(3)}¢
-              {seed.session_id ? (
-                <> · saved ({seed.session_id.slice(0, 8)}…)</>
-              ) : (
-                <> · anonymous</>
-              )}
+              {totalCount} FAQ{totalCount === 1 ? "" : "s"}
+              {seed.session_id && <> · saved</>}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -533,7 +528,8 @@ function Loaded({ seed }: { seed: InitialSessionData }) {
           <Card>
             <CardBody className="flex items-center justify-between gap-3">
               <p className="text-sm text-zinc-700">
-                You&apos;re viewing this as a guest. Sign in to save, edit, or reorder.
+                You&apos;re viewing this as a guest. Sign in to save, edit, reorder, or create a
+                shareable link.
               </p>
               <Link href={`/login?next=${encodeURIComponent("/faq/new")}`}>
                 <Button size="sm">Sign in</Button>
