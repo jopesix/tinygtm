@@ -1,25 +1,18 @@
-// TinyGTM landing — ported from the Claude Design handoff bundle (chat1.md).
-// Structure mirrors the design file: TopBar (with Tools dropdown) → Hero →
-// Tool grid (2×2) → Footer with email capture + Peace Itimi credit.
+// TinyGTM landing — minimal text-only design (handoff 2026-05-19).
+// Top bar (brand + Tools dropdown + live pill) → centered hero → tools list →
+// footer with email capture + Peace Itimi credit. No SVG art.
 
 import Link from "next/link";
 import { EmailForm } from "@/components/EmailForm";
 import { TOOLS, liveCount } from "@/lib/tools";
-import {
-  UtmArt,
-  CampaignArt,
-  FaqArt,
-  ExperimentArt,
-  HeroArt,
-  ChevronDown,
-} from "@/components/landing-svgs";
 
-const TOOL_ART = {
-  utm: UtmArt,
-  campaign: CampaignArt,
-  faq: FaqArt,
-  experiments: ExperimentArt,
-} as const;
+function ChevronDown() {
+  return (
+    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+      <path d="M2 4l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 export default function HomePage() {
   return (
@@ -28,7 +21,7 @@ export default function HomePage() {
         <div className="wrap topbar-inner">
           <Link className="brand" href="/" aria-label="TinyGTM home">
             <span className="brand-mark" aria-hidden="true" />
-            Tiny<span className="lc">GTM</span>
+            TinyGTM
           </Link>
 
           <nav className="topnav" aria-label="Primary">
@@ -46,12 +39,11 @@ export default function HomePage() {
                 {TOOLS.map((t) => {
                   const Inner = (
                     <>
-                      <span className="di-icon">{t.number}</span>
+                      <span className="di-num">{t.number}</span>
                       <span className="di-text">
-                        <span className="di-title">{t.shortName}</span>
-                        <span className="di-desc">{t.shortDesc}</span>
+                        <span className="di-title">{t.name}</span>
+                        <span className="di-tag">{t.tag}</span>
                       </span>
-                      <span className="di-arrow">→</span>
                     </>
                   );
                   return t.href ? (
@@ -60,8 +52,6 @@ export default function HomePage() {
                       className="dropdown-item"
                       role="menuitem"
                       href={t.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
                     >
                       {Inner}
                     </a>
@@ -75,7 +65,7 @@ export default function HomePage() {
             </div>
             <span className="live-pill">
               <span className="dot" />
-              {liveCount()} live · more shipping
+              {liveCount()} live · more soon
             </span>
           </nav>
         </div>
@@ -83,35 +73,28 @@ export default function HomePage() {
 
       <section className="hero">
         <div className="wrap">
-          <div className="hero-grid">
-            <div>
-              <div className="eyebrow">Tiny tools for go-to-market work</div>
-              <h1>
-                Tiny tools for the marketing work{" "}
-                <span className="accent">you repeat weekly.</span>
-              </h1>
-              <p className="lede">
-                TinyGTM turns product context, campaign notes, customer insights, and growth goals
-                into structured marketing assets your team can copy, edit, export, and reuse; from
-                tracking links and campaign briefs to launch checklists, FAQs, and growth
-                experiments.
-              </p>
-              <div className="hero-ctas">
-                <a className="btn btn-primary" href="#tools">
-                  Browse the tools
-                </a>
-              </div>
-              <div className="hero-meta">
-                <span>Free</span>
-                <span className="dot" />
-                <span>No sign-up</span>
-                <span className="dot" />
-                <span>Built for solo founders &amp; small GTM teams</span>
-              </div>
+          <div className="inner">
+            <div className="eyebrow">Free toolkit for repetitive GTM work</div>
+            <h1>
+              Tiny tools for the marketing work{" "}
+              <span className="accent">you repeat weekly.</span>
+            </h1>
+            <p className="lede">
+              TinyGTM turns product context, campaign notes, customer insights, and growth goals
+              into structured marketing assets your team can copy, edit, export, and reuse — from
+              tracking links and campaign plans to FAQs and growth experiments.
+            </p>
+            <div className="hero-ctas">
+              <a className="btn btn-primary" href="#tools">
+                Browse the tools
+              </a>
             </div>
-
-            <div className="hero-art" aria-hidden="true">
-              <HeroArt />
+            <div className="hero-meta">
+              <span>Free</span>
+              <span className="dot" />
+              <span>No sign-up</span>
+              <span className="dot" />
+              <span>Built for solo founders &amp; small GTM teams</span>
             </div>
           </div>
         </div>
@@ -120,60 +103,52 @@ export default function HomePage() {
       <section className="tools" id="tools">
         <div className="wrap">
           <div className="tools-head">
-            <div>
-              <div className="eyebrow">Four utilities</div>
-              <h2>Pick the one that solves today&apos;s annoying task.</h2>
-            </div>
+            <div className="eyebrow">The tools</div>
+            <h2>Pick the one that solves today&apos;s annoying task.</h2>
           </div>
 
-          <div className="tool-grid">
+          <div className="tool-list">
             {TOOLS.map((t) => {
-              const Art = TOOL_ART[t.slug as keyof typeof TOOL_ART];
-              const isClickable = Boolean(t.href);
-              const className = `tool${isClickable ? "" : " is-soon"}`;
-              const ariaLabel = isClickable
-                ? `Open TinyGTM ${t.shortName}`
-                : t.status === "live"
-                  ? `${t.shortName} — TinyGTM tool`
-                  : `${t.shortName} — coming soon`;
+              const isLive = t.status === "live" && Boolean(t.href);
 
               const inner = (
                 <>
-                  <div className="tool-art">
-                    <Art />
+                  <span className="tool-num">{t.number}</span>
+                  <div className="tool-content">
+                    <h3 className="tool-name">{t.name}</h3>
+                    <p className="tool-desc">{t.longDesc}</p>
                   </div>
-                  <div className="tool-body">
-                    <div className="tool-meta">
-                      <span className="tool-num">{t.number}</span>
-                      <span className={`tool-status${t.status === "live" ? " live" : ""}`}>
-                        {t.status === "live" ? "Live" : "Soon"}
-                      </span>
-                    </div>
-                    <h3>{t.name}</h3>
-                    <p>{t.longDesc}</p>
-                    <div className="tool-foot">
-                      <span className="tool-cta">
-                        {t.ctaLabel} <span className="tool-cta-arrow">→</span>
-                      </span>
-                      <span className="tool-tag">{t.tag}</span>
-                    </div>
+                  <div className="tool-right">
+                    {isLive ? (
+                      <>
+                        <span className="tool-tag">{t.tag}</span>
+                        <span className="tool-arrow" aria-hidden="true">→</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="tool-tag">{t.tag}</span>
+                        <span className="tool-soon">Soon</span>
+                      </>
+                    )}
                   </div>
                 </>
               );
 
-              return isClickable && t.href ? (
+              return isLive && t.href ? (
                 <a
                   key={t.slug}
-                  className={className}
+                  className="tool"
                   href={t.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={ariaLabel}
+                  aria-label={`Open TinyGTM ${t.shortName}`}
                 >
                   {inner}
                 </a>
               ) : (
-                <div key={t.slug} className={className} aria-label={ariaLabel}>
+                <div
+                  key={t.slug}
+                  className="tool is-soon"
+                  aria-label={`${t.shortName} — coming soon`}
+                >
                   {inner}
                 </div>
               );
@@ -198,13 +173,13 @@ export default function HomePage() {
           </div>
 
           <div className="footer-bottom">
-            <div className="brand" style={{ fontSize: "15px" }}>
+            <div className="brand" style={{ fontSize: "14px" }}>
               <span
                 className="brand-mark"
                 aria-hidden="true"
-                style={{ width: "22px", height: "22px", borderRadius: "6px" }}
+                style={{ width: "20px", height: "20px", borderRadius: "6px" }}
               />
-              Tiny<span className="lc">GTM</span>
+              TinyGTM
             </div>
             <div className="credit">
               Built by{" "}
@@ -212,7 +187,6 @@ export default function HomePage() {
                 Peace Itimi
               </a>
             </div>
-            <div>© 2026 · Made for marketers who don&apos;t want a platform.</div>
           </div>
         </div>
       </footer>
