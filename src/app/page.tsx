@@ -36,31 +36,20 @@ export default function HomePage() {
                 <ChevronDown />
               </button>
               <div className="dropdown-panel" role="menu">
-                {TOOLS.map((t) => {
-                  const Inner = (
-                    <>
-                      <span className="di-num">{t.number}</span>
-                      <span className="di-text">
-                        <span className="di-title">{t.name}</span>
-                        <span className="di-tag">{t.tag}</span>
-                      </span>
-                    </>
-                  );
-                  return t.href ? (
-                    <a
-                      key={t.slug}
-                      className="dropdown-item"
-                      role="menuitem"
-                      href={t.href}
-                    >
-                      {Inner}
-                    </a>
-                  ) : (
-                    <a key={t.slug} className="dropdown-item" role="menuitem" href="#tools">
-                      {Inner}
-                    </a>
-                  );
-                })}
+                {TOOLS.filter((t) => t.status === "live" && t.href).map((t) => (
+                  <a
+                    key={t.slug}
+                    className="dropdown-item"
+                    role="menuitem"
+                    href={t.href!}
+                  >
+                    <span className="di-num">{t.number}</span>
+                    <span className="di-text">
+                      <span className="di-title">{t.name}</span>
+                      <span className="di-tag">{t.tag}</span>
+                    </span>
+                  </a>
+                ))}
               </div>
             </div>
             <span className="live-pill">

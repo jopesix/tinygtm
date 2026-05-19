@@ -479,14 +479,15 @@ a {
 .tool-soon {
   font-family: var(--ff-mono);
   font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-tertiary);
-  padding: 3px 9px;
+  color: var(--text-inverted);
+  padding: 4px 10px;
   border-radius: 999px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-default);
+  background: var(--coral);
+  border: 1px solid var(--coral);
+  box-shadow: var(--shadow-cta);
 }
 
 /* ---------- Footer / email capture ---------- */

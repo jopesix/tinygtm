@@ -63,9 +63,8 @@ export function ToolSwitcher() {
           role="menu"
           className="absolute right-0 top-full mt-2 w-80 bg-white border border-zinc-200 rounded-xl shadow-lg p-1.5 z-50"
         >
-          {TOOLS.map((t) => {
+          {TOOLS.filter((t) => t.status === "live" && t.href).map((t) => {
             const isCurrent = t.slug === currentSlug;
-            const isSoon = t.status !== "live" || !t.href;
 
             const inner = (
               <>
@@ -86,19 +85,15 @@ export function ToolSwitcher() {
                     {t.tag}
                   </span>
                 </span>
-                {isCurrent ? (
+                {isCurrent && (
                   <span className="shrink-0 text-[10.5px] font-mono uppercase tracking-wider text-zinc-400">
                     Current
                   </span>
-                ) : isSoon ? (
-                  <span className="shrink-0 text-[10.5px] font-mono uppercase tracking-wider text-zinc-400">
-                    Soon
-                  </span>
-                ) : null}
+                )}
               </>
             );
 
-            if (isCurrent || isSoon || !t.href) {
+            if (isCurrent) {
               return (
                 <div
                   key={t.slug}
@@ -113,7 +108,7 @@ export function ToolSwitcher() {
             return (
               <Link
                 key={t.slug}
-                href={t.href}
+                href={t.href!}
                 role="menuitem"
                 onClick={() => setOpen(false)}
                 className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-zinc-50 group"
