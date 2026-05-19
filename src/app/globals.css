@@ -490,6 +490,278 @@ a {
   box-shadow: var(--shadow-cta);
 }
 
+/* ---------- Tool landing pages ---------- */
+.lp-section {
+  padding: 80px 0;
+}
+.lp-section + .lp-section {
+  border-top: 1px solid var(--border-default);
+}
+.lp-section-head {
+  margin: 0 auto 48px;
+  max-width: 640px;
+  text-align: center;
+}
+.lp-section-head h2 {
+  font-family: var(--ff-display);
+  font-size: 36px;
+  line-height: 1.12;
+  letter-spacing: -0.028em;
+  font-weight: 600;
+  margin: 12px 0 12px;
+  text-wrap: balance;
+}
+.lp-section-head p {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* Features grid */
+.lp-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.lp-feature {
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.lp-feature-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: var(--coral-bg);
+  border: 1px solid var(--coral-soft);
+  color: var(--coral);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+  font-family: var(--ff-mono);
+  font-size: 13px;
+  font-weight: 700;
+}
+.lp-feature h3 {
+  font-family: var(--ff-display);
+  font-size: 16.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  margin: 0;
+  color: var(--text-primary);
+}
+.lp-feature p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+/* How it works */
+.lp-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  counter-reset: step;
+}
+.lp-step {
+  position: relative;
+  padding-top: 12px;
+}
+.lp-step .lp-step-num {
+  font-family: var(--ff-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--coral);
+  letter-spacing: 0.06em;
+}
+.lp-step h3 {
+  font-family: var(--ff-display);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 6px 0 8px;
+  letter-spacing: -0.015em;
+}
+.lp-step p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+/* FAQ accordion */
+.lp-faq {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.lp-faq details {
+  border-top: 1px solid var(--border-default);
+  padding: 20px 4px;
+}
+.lp-faq details:last-of-type {
+  border-bottom: 1px solid var(--border-default);
+}
+.lp-faq summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-family: var(--ff-display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  color: var(--text-primary);
+}
+.lp-faq summary::-webkit-details-marker { display: none; }
+.lp-faq summary::after {
+  content: "+";
+  font-family: var(--ff-mono);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text-tertiary);
+  transition: transform 200ms ease;
+}
+.lp-faq details[open] summary::after {
+  content: "−";
+}
+.lp-faq details[open] summary {
+  color: var(--coral);
+}
+.lp-faq .answer {
+  margin: 12px 0 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 64ch;
+}
+
+/* Pair-with / cross-link block */
+.lp-pair {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.lp-pair-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--bg-canvas);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+.lp-pair-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-1px);
+}
+.lp-pair-card:hover .lp-pair-name {
+  color: var(--coral);
+}
+.lp-pair-num {
+  shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: var(--coral-bg);
+  color: var(--coral);
+  border: 1px solid var(--coral-soft);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--ff-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+.lp-pair-text { min-width: 0; }
+.lp-pair-name {
+  display: block;
+  font-family: var(--ff-display);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+  transition: color 160ms ease;
+}
+.lp-pair-tag {
+  display: block;
+  font-family: var(--ff-mono);
+  font-size: 11.5px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+/* Tool-landing hero — slightly tighter than home hero */
+.lp-hero {
+  padding: 96px 0 80px;
+  text-align: center;
+  position: relative;
+}
+.lp-hero .inner {
+  max-width: 740px;
+  margin: 0 auto;
+}
+.lp-hero h1 {
+  font-family: var(--ff-display);
+  font-size: 52px;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+  margin: 18px 0 22px;
+  text-wrap: balance;
+}
+.lp-hero h1 .accent { color: var(--coral); }
+.lp-hero .lede {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 60ch;
+  margin: 0 auto 28px;
+  text-wrap: pretty;
+}
+.lp-hero-ctas {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.lp-hero-meta {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+.lp-hero-meta .dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--border-hover);
+}
+
+@media (max-width: 900px) {
+  .lp-features,
+  .lp-steps,
+  .lp-pair {
+    grid-template-columns: 1fr;
+  }
+  .lp-hero h1 { font-size: 38px; }
+  .lp-section-head h2 { font-size: 28px; }
+  .lp-section { padding: 56px 0; }
+}
+
 /* ---------- Footer / email capture ---------- */
 .footer {
   padding: 96px 0 48px;

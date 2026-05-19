@@ -1,64 +1,59 @@
 // TinyGTM landing — minimal text-only design (handoff 2026-05-19).
 // Top bar (brand + Tools dropdown + live pill) → centered hero → tools list →
 // footer with email capture + Peace Itimi credit. No SVG art.
+//
+// Tool tiles + dropdown link to /<tool>-landing pages for SEO funnel; in-app
+// nav links elsewhere go direct to the builder.
 
 import Link from "next/link";
-import { EmailForm } from "@/components/EmailForm";
-import { TOOLS, liveCount } from "@/lib/tools";
-
-function ChevronDown() {
-  return (
-    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
-      <path d="M2 4l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
+import { LandingTopNav } from "@/components/landing/LandingTopNav";
+import { LandingFooter } from "@/components/landing/LandingFooter";
+import { JsonLd } from "@/components/landing/JsonLd";
+import { TOOLS } from "@/lib/tools";
+import { SITE, absoluteUrl } from "@/lib/site";
 
 export default function HomePage() {
+  const websiteLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE.name,
+    url: SITE.url,
+    description: SITE.description,
+    inLanguage: "en-US",
+    publisher: {
+      "@type": "Person",
+      name: SITE.author,
+      url: SITE.authorUrl,
+    },
+  };
+
+  const orgLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: SITE.name,
+    url: SITE.url,
+    logo: absoluteUrl("/opengraph-image"),
+    founder: { "@type": "Person", name: SITE.author, url: SITE.authorUrl },
+  };
+
+  const itemListLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "TinyGTM tools",
+    itemListElement: TOOLS.filter((t) => t.status === "live" && t.landingHref).map(
+      (t, idx) => ({
+        "@type": "ListItem",
+        position: idx + 1,
+        url: absoluteUrl(t.landingHref!),
+        name: t.name,
+      }),
+    ),
+  };
+
   return (
     <>
-      <header className="topbar">
-        <div className="wrap topbar-inner">
-          <Link className="brand" href="/" aria-label="TinyGTM home">
-            <span className="brand-mark" aria-hidden="true" />
-            TinyGTM
-          </Link>
-
-          <nav className="topnav" aria-label="Primary">
-            <div className="has-dropdown">
-              <button
-                className="dropdown-trigger"
-                aria-haspopup="true"
-                aria-expanded="false"
-                type="button"
-              >
-                Tools
-                <ChevronDown />
-              </button>
-              <div className="dropdown-panel" role="menu">
-                {TOOLS.filter((t) => t.status === "live" && t.href).map((t) => (
-                  <a
-                    key={t.slug}
-                    className="dropdown-item"
-                    role="menuitem"
-                    href={t.href!}
-                  >
-                    <span className="di-num">{t.number}</span>
-                    <span className="di-text">
-                      <span className="di-title">{t.name}</span>
-                      <span className="di-tag">{t.tag}</span>
-                    </span>
-                  </a>
-                ))}
-              </div>
-            </div>
-            <span className="live-pill">
-              <span className="dot" />
-              {liveCount()} live · more soon
-            </span>
-          </nav>
-        </div>
-      </header>
+      <JsonLd data={[websiteLd, orgLd, itemListLd]} />
+      <LandingTopNav />
 
       <section className="hero">
         <div className="wrap">
@@ -98,7 +93,7 @@ export default function HomePage() {
 
           <div className="tool-list">
             {TOOLS.map((t) => {
-              const isLive = t.status === "live" && Boolean(t.href);
+              const isLive = t.status === "live" && Boolean(t.landingHref);
 
               const inner = (
                 <>
@@ -123,15 +118,15 @@ export default function HomePage() {
                 </>
               );
 
-              return isLive && t.href ? (
-                <a
+              return isLive && t.landingHref ? (
+                <Link
                   key={t.slug}
                   className="tool"
-                  href={t.href}
-                  aria-label={`Open TinyGTM ${t.shortName}`}
+                  href={t.landingHref}
+                  aria-label={`Learn more about TinyGTM ${t.shortName}`}
                 >
                   {inner}
-                </a>
+                </Link>
               ) : (
                 <div
                   key={t.slug}
@@ -146,39 +141,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className="footer">
-        <div className="wrap">
-          <div className="footer-cta">
-            <div className="eyebrow">Stay in the loop</div>
-            <h2>Get an email when we ship a new tool.</h2>
-            <p>
-              Roughly one email per release. No newsletter, no funnel — just a note when a new tiny
-              utility goes live.
-            </p>
-            <EmailForm />
-            <div className="footer-meta">
-              We&apos;ll only email about new TinyGTM tools. Unsubscribe anytime.
-            </div>
-          </div>
-
-          <div className="footer-bottom">
-            <div className="brand" style={{ fontSize: "14px" }}>
-              <span
-                className="brand-mark"
-                aria-hidden="true"
-                style={{ width: "20px", height: "20px", borderRadius: "6px" }}
-              />
-              TinyGTM
-            </div>
-            <div className="credit">
-              Built by{" "}
-              <a href="https://peaceitimi.com" target="_blank" rel="noopener noreferrer">
-                Peace Itimi
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <LandingFooter />
     </>
   );
 }

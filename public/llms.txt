@@ -1,0 +1,32 @@
+# TinyGTM
+
+> Free marketing utilities for solo founders and small GTM teams. Build UTM tracking links, generate FAQs from your product context, and plan launch campaigns — no sign-up required.
+
+TinyGTM is a small suite of focused, single-purpose marketing tools. Each tool is free, anonymous-friendly, and does one thing well. Sign-in is only required for saving, editing, and sharing.
+
+## Tools
+
+- [UTM Link Builder & Tracker](https://tinygtm.io/utm-link-builder): Build campaign tracking links with naming-rule enforcement, duplicate detection, and CSV export. Functional builder at /utm.
+- [GTM/Campaign Planner](https://tinygtm.io/campaign-planner): Paste kickoff notes, transcript, or Slack threads. Get a tailored launch plan with operational tasks per phase, classification, and gap flagging. Functional planner at /campaign/new.
+- [FAQ Generator](https://tinygtm.io/faq-generator): Generate realistic customer FAQs from product docs, URLs, PRDs, and call notes. Grouped by persona, grounded in source material. Functional generator at /faq/new.
+
+## Core principles
+
+- **Free and anonymous by default.** Try every tool without an account. Sign-in only unlocks save, edit, reorder, dashboard, and shareable links.
+- **Each tool is the artifact.** The output (the link, the plan, the FAQs) is paste-ready and exportable. We don't dilute the artifact with branding or upsells.
+- **Single-purpose.** TinyGTM doesn't try to replace Notion, Asana, Linear, or your analytics platform. It produces the thing those tools live alongside.
+- **Built for marketers who don't want a platform.** Solo founders, small GTM teams, PMMs without coordinators, demand-gen leads juggling four campaigns.
+
+## Pricing
+
+All tools are free. There is no paid tier today. Rate limits apply per-day per-user/IP to keep AI costs sustainable.
+
+## Privacy
+
+- TinyGTM doesn't proxy, shorten, or track UTM clicks — your analytics platform owns that.
+- Anonymous sessions never leave the browser. Saved sessions are scoped to your account via Supabase RLS.
+- The email-capture form is opt-in only and used to announce new tools. No newsletter, no funnel.
+
+## Built by
+
+[Peace Itimi](https://peaceitimi.com)

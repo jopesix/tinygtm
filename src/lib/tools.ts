@@ -15,7 +15,8 @@ export type Tool = {
   ctaLabel: string;
   tag: string;
   status: ToolStatus;
-  href: string | null;
+  href: string | null; // direct entry to the functional tool (builder/wizard)
+  landingHref: string | null; // SEO landing page (or null for "soon" tools)
 };
 
 export const TOOLS: readonly Tool[] = [
@@ -34,6 +35,7 @@ export const TOOLS: readonly Tool[] = [
     // When tools consolidate into this monorepo, /utm becomes a real route
     // group and the link doesn't need to change.
     href: "/utm",
+    landingHref: "/utm-link-builder",
   },
   {
     number: "02",
@@ -47,6 +49,7 @@ export const TOOLS: readonly Tool[] = [
     tag: "PMM · Founders · Demand gen",
     status: "live",
     href: "/campaign/new",
+    landingHref: "/campaign-planner",
   },
   {
     number: "03",
@@ -61,6 +64,7 @@ export const TOOLS: readonly Tool[] = [
     status: "live",
     // Internal /faq path → 307 redirect to the external FAQ Generator app.
     href: "/faq",
+    landingHref: "/faq-generator",
   },
   {
     number: "04",
@@ -74,6 +78,7 @@ export const TOOLS: readonly Tool[] = [
     tag: "Growth · PLG · Lifecycle",
     status: "soon",
     href: null,
+    landingHref: null,
   },
 ] as const;
 
