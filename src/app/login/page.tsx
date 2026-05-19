@@ -44,9 +44,10 @@ export default function LoginPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Sign in to FAQ Generator</CardTitle>
+            <CardTitle>Sign in to TinyGTM</CardTitle>
             <CardDescription>
-              Save your FAQs, edit later, and manage product profiles across the TinyGTM suite.
+              One sign-in for the whole suite — FAQ Generator, UTM Builder, Campaign Planner.
+              We&apos;ll email you a one-time link.
             </CardDescription>
           </CardHeader>
           <CardBody>

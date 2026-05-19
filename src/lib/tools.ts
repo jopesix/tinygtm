@@ -38,15 +38,15 @@ export const TOOLS: readonly Tool[] = [
   {
     number: "02",
     slug: "campaign",
-    name: "Campaign Brief & Launch Checklist Generator",
-    shortName: "Campaign Briefs",
-    shortDesc: "Briefs & launch checklists from messy notes",
+    name: "Campaign Operations Planner",
+    shortName: "Campaign Planner",
+    shortDesc: "Turn messy campaign context into an executable launch plan",
     longDesc:
-      "Turn messy kickoff notes, transcripts, and Slack threads into a structured campaign brief and tailored launch checklist.",
-    ctaLabel: "Open Campaign Briefs",
-    tag: "PMM · Founders",
-    status: "soon",
-    href: null,
+      "Paste your kickoff notes, transcript, or Slack thread. We classify the campaign, build a tailored launch plan with operational tasks per phase, and flag gaps you might have forgotten.",
+    ctaLabel: "Open Campaign Planner",
+    tag: "PMM · Founders · Demand gen",
+    status: "live",
+    href: "/campaign/new",
   },
   {
     number: "03",
