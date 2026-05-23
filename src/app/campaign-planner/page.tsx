@@ -7,6 +7,7 @@ import { LandingTopNav } from "@/components/landing/LandingTopNav";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 import { JsonLd } from "@/components/landing/JsonLd";
 import { SITE, absoluteUrl } from "@/lib/site";
+import { CAMPAIGN_TYPES } from "@/lib/campaign-types";
 
 const PATH = "/campaign-planner";
 const TITLE = "GTM/Campaign Planner — Turn Messy Notes into a Launch Plan";
@@ -251,6 +252,30 @@ export default function CampaignPlannerLanding() {
                 <summary>{q}</summary>
                 <p className="answer">{a}</p>
               </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="lp-section">
+        <div className="wrap">
+          <div className="lp-section-head">
+            <div className="eyebrow">By campaign type</div>
+            <h2>Plan generators for every campaign type</h2>
+            <p>
+              Tailored plans for the specific campaign you are about to run. Product launches,
+              webinars, paid acquisition, content, lifecycle, PR, and more.
+            </p>
+          </div>
+          <div className="lp-pair">
+            {CAMPAIGN_TYPES.slice(0, 6).map((c) => (
+              <Link key={c.slug} href={`/campaign-planner/${c.slug}`} className="lp-pair-card">
+                <span className="lp-pair-num">→</span>
+                <span className="lp-pair-text">
+                  <span className="lp-pair-name">{c.name}</span>
+                  <span className="lp-pair-tag">{c.searchPhrase}</span>
+                </span>
+              </Link>
             ))}
           </div>
         </div>

@@ -67,7 +67,7 @@ export default function AboutPage() {
             </h1>
             <p className="lede">
               TinyGTM is a small suite of focused, single-purpose marketing utilities. Free,
-              anonymous-friendly, built around the work marketers do every week — not the work
+              anonymous-friendly, and built around the work marketers do every week, not the work
               that fits a SaaS sales deck.
             </p>
           </div>
@@ -85,7 +85,7 @@ export default function AboutPage() {
             customer FAQs. You don&apos;t need a launch coordinator to plan a webinar.
           </p>
           <p>
-            What you need is the artifact — the link, the plan, the FAQs — paste-ready, exportable,
+            What you need is the artifact: the link, the plan, the FAQs. Paste-ready, exportable,
             and ideally produced in under a minute. That&apos;s what TinyGTM does. Each tool
             covers exactly one repetitive marketing task and gets out of your way.
           </p>
@@ -99,8 +99,8 @@ export default function AboutPage() {
               you want to save, edit, reorder, or share.
             </li>
             <li>
-              <strong>The output is the artifact.</strong> Copy-ready, export-ready. No watermarks,
-              no upsells inside the artifact.
+              <strong>The output is the artifact.</strong> Copy-ready and export-ready, with no
+              watermarks or upsells inside it.
             </li>
             <li>
               <strong>Single-purpose.</strong> Each tool does one thing. We&apos;re not trying to
@@ -119,46 +119,25 @@ export default function AboutPage() {
             <li>
               <Link href="/utm-link-builder" style={{ color: "var(--coral)", textDecoration: "underline" }}>
                 UTM Link Builder &amp; Tracker
-              </Link>{" "}
-              — clean campaign URLs without breaking your naming conventions.
+              </Link>
+              : clean campaign URLs without breaking your naming conventions.
             </li>
             <li>
               <Link href="/campaign-planner" style={{ color: "var(--coral)", textDecoration: "underline" }}>
                 GTM/Campaign Planner
-              </Link>{" "}
-              — paste any campaign context, get a tailored launch plan.
+              </Link>
+              : paste any campaign context and get a tailored launch plan.
             </li>
             <li>
               <Link href="/faq-generator" style={{ color: "var(--coral)", textDecoration: "underline" }}>
                 FAQ Generator
-              </Link>{" "}
-              — realistic customer FAQs from product docs, URLs, and call notes.
+              </Link>
+              : realistic customer FAQs from product docs, URLs, and call notes.
             </li>
             <li>
-              Marketing Experiment Generator — structured growth experiments. Coming soon.
+              Marketing Experiment Generator: structured growth experiments. Coming soon.
             </li>
           </ul>
-
-          <h2 style={{ fontFamily: "var(--ff-display)", fontSize: 28, marginTop: 56 }}>
-            Who built this
-          </h2>
-          <p>
-            TinyGTM is built and maintained by{" "}
-            <a
-              href={SITE.authorUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: "var(--coral)", textDecoration: "underline" }}
-            >
-              Peace Itimi
-            </a>
-            , a marketer who&apos;s spent a decade running GTM for early-stage companies. Every
-            tool here scratches a personal itch — work that came up so often it was worth turning
-            into a utility instead of doing manually one more time.
-          </p>
-          <p>
-            If a tool is missing, broken, or could be better: peace@tinygtm.tools.
-          </p>
         </div>
       </section>
 

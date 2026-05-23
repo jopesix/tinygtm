@@ -58,9 +58,24 @@ export function EmailForm() {
           disabled={isLocked}
         />
         <button type="submit" disabled={isLocked}>
-          {state === "submitting" ? "Sending…" : state === "done" ? "Thanks ✓" : "Notify me"}
+          {state === "submitting" ? "Sending…" : state === "done" ? "You're on the list" : "Notify me"}
         </button>
       </form>
+      {state === "done" && (
+        <div
+          role="status"
+          aria-live="polite"
+          style={{
+            marginTop: 12,
+            fontSize: 13.5,
+            color: "#0a7a55",
+            textAlign: "center",
+            fontWeight: 500,
+          }}
+        >
+          ✓ Subscribed. We&apos;ll only email when something new ships.
+        </div>
+      )}
       {state === "error" && errorMsg && (
         <div
           role="alert"

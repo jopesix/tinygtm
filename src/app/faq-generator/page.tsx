@@ -7,6 +7,7 @@ import { LandingTopNav } from "@/components/landing/LandingTopNav";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 import { JsonLd } from "@/components/landing/JsonLd";
 import { SITE, absoluteUrl } from "@/lib/site";
+import { FAQ_USE_CASES } from "@/lib/faq-use-cases";
 
 const PATH = "/faq-generator";
 const TITLE = "AI FAQ Generator — Realistic Customer FAQs from Your Product";
@@ -255,6 +256,31 @@ export default function FaqGeneratorLanding() {
                 <summary>{q}</summary>
                 <p className="answer">{a}</p>
               </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="lp-section">
+        <div className="wrap">
+          <div className="lp-section-head">
+            <div className="eyebrow">By use case</div>
+            <h2>FAQ Generator for specific contexts</h2>
+            <p>
+              Different surfaces have different FAQ needs. Product pages need pre-purchase
+              questions. Help centers need triage-level answers. Landing pages need objection
+              handling. Each variant is tuned to the context.
+            </p>
+          </div>
+          <div className="lp-pair">
+            {FAQ_USE_CASES.slice(0, 6).map((c) => (
+              <Link key={c.slug} href={`/faq-generator/${c.slug}`} className="lp-pair-card">
+                <span className="lp-pair-num">→</span>
+                <span className="lp-pair-text">
+                  <span className="lp-pair-name">{c.name}</span>
+                  <span className="lp-pair-tag">{c.searchPhrase}</span>
+                </span>
+              </Link>
             ))}
           </div>
         </div>
