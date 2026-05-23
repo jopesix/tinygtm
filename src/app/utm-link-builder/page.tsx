@@ -9,6 +9,7 @@ import { LandingTopNav } from "@/components/landing/LandingTopNav";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 import { JsonLd } from "@/components/landing/JsonLd";
 import { SITE, absoluteUrl } from "@/lib/site";
+import { UTM_CHANNELS } from "@/lib/utm-channels";
 
 const PATH = "/utm-link-builder";
 const TITLE = "Free UTM Link Builder & Tracker for Marketers";
@@ -250,6 +251,34 @@ export default function UtmLinkBuilderLanding() {
                 <summary>{q}</summary>
                 <p className="answer">{a}</p>
               </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="lp-section">
+        <div className="wrap">
+          <div className="lp-section-head">
+            <div className="eyebrow">By channel</div>
+            <h2>Channel-specific UTM Builder guides</h2>
+            <p>
+              Channel-specific naming conventions, examples, and gotchas for the platforms
+              you&apos;re actually running campaigns on.
+            </p>
+          </div>
+          <div className="lp-pair">
+            {UTM_CHANNELS.slice(0, 6).map((c) => (
+              <Link
+                key={c.slug}
+                href={`/utm-link-builder/${c.slug}`}
+                className="lp-pair-card"
+              >
+                <span className="lp-pair-num">→</span>
+                <span className="lp-pair-text">
+                  <span className="lp-pair-name">{c.name} UTM Builder</span>
+                  <span className="lp-pair-tag">{c.searchPhrase}</span>
+                </span>
+              </Link>
             ))}
           </div>
         </div>
