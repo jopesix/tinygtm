@@ -6,9 +6,9 @@ TinyGTM is a small suite of focused, single-purpose marketing tools. Each tool i
 
 ## Tools
 
-- [UTM Link Builder & Tracker](https://tinygtm.io/utm-link-builder): Build campaign tracking links with naming-rule enforcement, duplicate detection, and CSV export. Functional builder at /utm.
-- [GTM/Campaign Planner](https://tinygtm.io/campaign-planner): Paste kickoff notes, transcript, or Slack threads. Get a tailored launch plan with operational tasks per phase, classification, and gap flagging. Functional planner at /campaign/new.
-- [FAQ Generator](https://tinygtm.io/faq-generator): Generate realistic customer FAQs from product docs, URLs, PRDs, and call notes. Grouped by persona, grounded in source material. Functional generator at /faq/new.
+- [UTM Link Builder & Tracker](https://tinygtm.tools/utm-link-builder): Build campaign tracking links with naming-rule enforcement, duplicate detection, and CSV export. Functional builder at /utm.
+- [GTM/Campaign Planner](https://tinygtm.tools/campaign-planner): Paste kickoff notes, transcript, or Slack threads. Get a tailored launch plan with operational tasks per phase, classification, and gap flagging. Functional planner at /campaign/new.
+- [FAQ Generator](https://tinygtm.tools/faq-generator): Generate realistic customer FAQs from product docs, URLs, PRDs, and call notes. Grouped by persona, grounded in source material. Functional generator at /faq/new.
 
 ## Core principles
 

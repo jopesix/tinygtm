@@ -68,7 +68,7 @@ export default async function OgImage() {
             gap: 16,
           }}
         >
-          <span>tinygtm.io</span>
+          <span>tinygtm.tools</span>
           <span style={{ width: 4, height: 4, borderRadius: 999, background: "#d4d4d1" }} />
           <span>Free · No sign-up</span>
         </div>

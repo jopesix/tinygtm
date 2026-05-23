@@ -3,7 +3,7 @@
 
 export const SITE = {
   name: "TinyGTM",
-  url: "https://tinygtm.io",
+  url: "https://tinygtm.tools",
   title: "TinyGTM — Tiny marketing utilities",
   tagline: "Tiny tools for the marketing work you repeat weekly.",
   description:

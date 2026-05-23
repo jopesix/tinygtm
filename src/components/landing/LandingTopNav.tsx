@@ -1,4 +1,4 @@
-// Public-facing top bar used on tinygtm.io marketing pages: the homepage and
+// Public-facing top bar used on tinygtm.tools marketing pages: the homepage and
 // the per-tool SEO landings. Mirrors the design handoff: brand mark + wordmark,
 // Tools dropdown of live tools only, and a "N live · more soon" pill.
 

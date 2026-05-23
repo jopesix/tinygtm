@@ -1,5 +1,5 @@
 // SEO landing page for the UTM Link Builder & Tracker tool.
-// tinygtm.io/utm-link-builder → CTA → tinygtm.io/utm
+// tinygtm.tools/utm-link-builder → CTA → tinygtm.tools/utm
 //
 // This is a marketing/SEO page. The actual builder UI lives at /utm.
 

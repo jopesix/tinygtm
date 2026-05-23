@@ -1,5 +1,5 @@
 // SEO landing page for the FAQ Generator tool.
-// tinygtm.io/faq-generator → CTA → tinygtm.io/faq/new
+// tinygtm.tools/faq-generator → CTA → tinygtm.tools/faq/new
 
 import type { Metadata } from "next";
 import Link from "next/link";

@@ -1,5 +1,5 @@
 // SEO landing page for the GTM/Campaign Planner tool.
-// tinygtm.io/campaign-planner → CTA → tinygtm.io/campaign/new
+// tinygtm.tools/campaign-planner → CTA → tinygtm.tools/campaign/new
 
 import type { Metadata } from "next";
 import Link from "next/link";
