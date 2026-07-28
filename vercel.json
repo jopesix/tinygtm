@@ -9,11 +9,11 @@
   "rewrites": [
     {
       "source": "/new",
-      "destination": "https://origin.useepisode.site/_episode/mount/9qVXmQYBz2mTVXZGjTynZk59OlC8IwoJ"
+      "destination": "https://origin.useepisode.site/_episode/mount/BOXtq-AYkWikuG-Gndn4yk6gldc9nEj3"
     },
     {
       "source": "/new/:path*",
-      "destination": "https://origin.useepisode.site/_episode/mount/9qVXmQYBz2mTVXZGjTynZk59OlC8IwoJ/:path*"
+      "destination": "https://origin.useepisode.site/_episode/mount/BOXtq-AYkWikuG-Gndn4yk6gldc9nEj3/:path*"
     }
   ]
 }
