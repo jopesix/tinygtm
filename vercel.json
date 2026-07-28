@@ -5,5 +5,15 @@
       "path": "/api/indexnow",
       "schedule": "0 6 * * *"
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/new",
+      "destination": "https://origin.useepisode.site/_episode/mount/9qVXmQYBz2mTVXZGjTynZk59OlC8IwoJ"
+    },
+    {
+      "source": "/new/:path*",
+      "destination": "https://origin.useepisode.site/_episode/mount/9qVXmQYBz2mTVXZGjTynZk59OlC8IwoJ/:path*"
+    }
   ]
 }
